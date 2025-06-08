@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why NVIDIA NIM - Interactive Pie Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        .chart-container {
+            width: 600px;
+            height: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .info-panel {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #76b900;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #76b900;
+            margin-bottom: 30px;
+        }
+        .nvidia-logo-container {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .nvidia-logo {
+            width: 65px;
+            height: auto;
+            background-color: #76b900;
+            border-radius: 4px;
+        }
+        .copyright-text {
+            font-size: 10px;
+            color: #ccc;
+            margin-top: 3px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Why NVIDIA NIM?</h1>
+    <div class="chart-container">
+        <canvas id="nimChart"></canvas>
+    </div>
+    <div id="infoPanel" class="info-panel" style="display:none;">
+        <h3 id="infoTitle"></h3>
+        <p id="infoDescription"></p>
+    </div>
+
+    <!-- NVIDIA Logo and Copyright -->
+    <div class="nvidia-logo-container">
+        <img src="NVLogo_2D.jpg" alt="NVIDIA Logo" class="nvidia-logo" onerror="this.style.display='none'">
+        <span class="copyright-text">© NVIDIA 2025</span>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('nimChart').getContext('2d');
+
+        const data = {
+            labels: [
+                'Enterprise-Grade Performance',
+                'Hardware Integration',
+                'Security & Scalability',
+                'Model Optimization',
+                'Real-time Processing'
+            ],
+            datasets: [{
+                data: [20, 20, 20, 20, 20],
+                backgroundColor: [
+                    '#76b900', // NVIDIA Green
+                    '#00d4aa',
+                    '#0099e0',
+                    '#7c3aed',
+                    '#f59e0b'
+                ],
+                borderColor: '#1a1a1a',
+                borderWidth: 3,
+                hoverOffset: 30
+            }]
+        };
+
+        const detailedInfo = {
+            'Enterprise-Grade Performance': 'Optimized for production-level AI model serving with high throughput and reliability for enterprise deployments.',
+            'Hardware Integration': 'Seamless compatibility with NVIDIA hardware ecosystem including GPUs, Jetson devices, and data center solutions.',
+            'Security & Scalability': 'Built-in enterprise security features and scalable architecture that grows with your business needs.',
+            'Model Optimization': 'Advanced model optimization specifically designed for Jetson devices to maximize performance on edge hardware.',
+            'Real-time Processing': 'Low-latency inference capabilities perfect for edge computing applications requiring immediate responses.'
+        };
+
+        const config = {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                animation: {
+                    animateRotate: true,
+                    animateScale: true,
+                    duration: 1500
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'white',
+                            padding: 20,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#2a2a2a',
+                        titleColor: '#76b900',
+                        bodyColor: 'white',
+                        borderColor: '#76b900',
+                        borderWidth: 1
+                    }
+                },
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const elementIndex = elements[0].index;
+                        const label = data.labels[elementIndex];
+
+                        // Show detailed information
+                        document.getElementById('infoTitle').textContent = label;
+                        document.getElementById('infoDescription').textContent = detailedInfo[label];
+                        document.getElementById('infoPanel').style.display = 'block';
+
+                        // Animate the clicked segment
+                        expandSegment(elementIndex);
+                    }
+                }
+            }
+        };
+
+        const chart = new Chart(ctx, config);
+
+        function expandSegment(index) {
+            // Reset all segments
+            chart.data.datasets[0].offset = [0, 0, 0, 0, 0];
+
+            // Expand clicked segment
+            chart.data.datasets[0].offset[index] = 20;
+
+            // Update chart with animation
+            chart.update('active');
+        }
+    </script>
+</body>
+</html>
